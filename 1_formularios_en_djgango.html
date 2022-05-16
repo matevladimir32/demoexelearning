@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<link rel="stylesheet" type="text/css" href="base.css" />
+<link rel="stylesheet" type="text/css" href="exe_highlighter.css" />
+<link rel="stylesheet" type="text/css" href="content.css" />
+<link rel="stylesheet" type="text/css" href="nav.css" />
+<meta http-equiv="content-type" content="text/html;  charset=utf-8" />
+<title>1. Formularios en Djgango | Formularios, URL y Deploy en Django </title>
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<meta name="author" content="Eduvirtual UNAB" />
+<link rel="license" type="text/html" href="http://creativecommons.org/licenses/by-sa/4.0/" />
+<meta name="generator" content="eXeLearning 2.6 - exelearning.net" />
+<!--[if lt IE 9]><script type="text/javascript" src="exe_html5.js"></script><![endif]-->
+<script type="text/javascript" src="exe_jquery.js"></script>
+<script type="text/javascript" src="exe_highlighter.js"></script>
+<script type="text/javascript" src="common_i18n.js"></script>
+<script type="text/javascript" src="common.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body class="exe-web-site" id="exe-node-1"><script type="text/javascript">document.body.className+=" js"</script>
+<div id="content">
+<p id="skipNav"><a href="#main" class="sr-av">Saltar la navegación</a></p>
+<header id="header" ><div id="headerContent">Formularios, URL y Deploy en Django</div></header>
+<nav id="siteNav">
+<ul>
+   <li><a href="index.html" class="daddy main-node">Inicio</a></li>
+   <li id="active"><a href="1_formularios_en_djgango.html" class="active no-ch">1. Formularios en Djgango</a></li>
+   <li><a href="2_url_en_formularios.html" class="no-ch">2. URL en Formularios</a></li>
+   <li><a href="3_manejo_de_plantillas.html" class="no-ch">3. Manejo de Plantillas</a></li>
+   <li><a href="4_guardando_en_el_formulario.html" class="no-ch">4. Guardando en el Formulario</a></li>
+   <li><a href="5_validacin_de_datos.html" class="no-ch">5. Validación de Datos</a></li>
+   <li><a href="6_seguridad.html" class="no-ch">6. Seguridad</a></li>
+</ul>
+</nav>
+<div id='topPagination'>
+<nav class="pagination noprt">
+<a href="index.html" class="prev"><span><span>&laquo; </span>Anterior</span></a> <span class="sep">| </span><a href="2_url_en_formularios.html" class="next"><span>Siguiente<span> &raquo;</span></span></a>
+</nav>
+</div>
+<div id="main-wrapper">
+<section id="main">
+<header id="nodeDecoration"><h1 id="nodeTitle">1. Formularios en Djgango</h1></header>
+<article class="iDevice_wrapper FreeTextIdevice" id="id7">
+<div class="iDevice emphasis0">
+<div id="ta7_86" class="block iDevice_content">
+<p><img src="Subtema1.png" alt="" width="4044" height="1024" /></p>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper textIdevice em_iDevice" id="id0">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header iDevice_header_noIcon"><h1 class="iDeviceTitle">Contenido</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta0_113_2" class="block iDevice_content">
+<div class="exe-text"><p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">En este capitulo, vamos ver de una forma rápida, el manejo de los formularios en proyectos de Django. El administrador de Django en proyectos pequeños, es muy funcional, pero es bastante difícil de personalizar y crear una visualización compatible con el manejo de usuarios en proyectos grandes. Con los formularios, podemos tener casi que un poder absoluto sobre nuestra interfaz; podemos hacer casi cualquier cosa que podamos imaginar dentro de un proyecto.</span></p>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Lo bueno de los formularios de Django es que podemos definirlos desde cero o crear un ModelForm, el cual guardará el resultado del formulario en el modelo. Esto es exactamente lo que queremos hacer: crearemos un formulario para nuestro modelo Post. Como cada parte importante de Django, los formularios tienen su propio archivo: forms.py. Para la demostración, crearemos un archivo con este nombre en el directorio blog.</span></p>
+<div class="highlighted-code code-style-2 language-python">
+<div>
+<pre><code>blog
+   └── forms.py</code></pre>
+</div>
+</div>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Ahora, podemos abrirlo en un editor de código (Visual Studio Code) y digitaremos lo siguiente:</span></p>
+<div class="highlighted-code code-style-2 language-python line-numbers">
+<div>
+<pre><code>from django import forms
+
+from .models import Post
+
+class PostForm(forms.ModelForm):
+
+    class Meta:
+        model = Post
+        fields = ('title', 'text',)</code></pre>
+</div>
+</div>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Lo primero, necesitamos importar Django forms (from django import forms) y nuestro modelo Post (from .models import Post). PostForm, como probablemente sospechas, es el nombre de nuestro formulario. Necesitamos decirle a Django que este formulario es un ModelForm (así Django hará algo de magia por nosotros) - forms.ModelForm es responsable de ello. </span><span style="font-family: arial, helvetica, sans-serif;">Luego, tenemos class Meta, donde le decimos a Django qué modelo debe ser utilizado para crear este formulario (model = Post). </span></p>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Finalmente, podemos decir qué campo o campos deberían estar en nuestro formulario. En este escenario sólo queremos title y text para ser mostrados - author será la persona que está conectada y created_date se definirá automáticamente cuando creemos un post, es decir, en el código. </span><span style="font-family: arial, helvetica, sans-serif;">Y eso es todo lo que necesitamos hacer ahora es usar el formulario en una view y mostrarla en una plantilla. Una vez más vamos a crear: un enlace a la página, una dirección URL, una vista y una plantilla.</span></p>
+<p style="text-align: justify;"><span style="font-size: 14pt;"><strong><span style="font-family: arial, helvetica, sans-serif;">Enlace a una página con el formulario</span></strong></span></p>
+<p><span style="font-family: arial, helvetica, sans-serif;">Ahora toca abrir el fichero blog/templates/blog/base.html en el editor. Vamos a añadir un enlace en el div llamado page-header:</span></p>
+<div class="highlighted-code code-style-2 language-markup line-numbers">
+<div>
+<pre><code>&lt;a href="{% url 'post_new' %}" class="top-menu"&gt;&lt;span class="glyphicon glyphicon-plus"&gt;&lt;/span&gt;&lt;/a&gt;</code></pre>
+</div>
+</div>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Ten en cuenta que queremos llamar a nuestra nueva vista post_new. La clase "glyphicon glyphicon-plus" es proporcionada por el tema de bootstrap que estamos utilizando, y nos mostrará un signo de suma. Después de agregar la línea, tu archivo html debería lucir de esta forma:</span></p>
+<div class="highlighted-code code-style-2 language-markup line-numbers">
+<div>
+<pre><code>{% load static %}
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Django Girls blog&lt;/title&gt;
+        &lt;link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"&gt;
+        &lt;link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"&gt;
+        &lt;link href='//fonts.googleapis.com/css?family=Lobster&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css'&gt;
+        &lt;link rel="stylesheet" href="{% static 'css/blog.css' %}"&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div class="page-header"&gt;
+            &lt;a href="{% url 'post_new' %}" class="top-menu"&gt;&lt;span class="glyphicon glyphicon-plus"&gt;&lt;/span&gt;&lt;/a&gt;
+            &lt;h1&gt;&lt;a href="/"&gt;Django Girls Blog&lt;/a&gt;&lt;/h1&gt;
+        &lt;/div&gt;
+        &lt;div class="content container"&gt;
+            &lt;div class="row"&gt;
+                &lt;div class="col-md-8"&gt;
+                    {% block content %}
+                    {% endblock %}
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+<p style="text-align: justify;"></p></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<div id="packageLicense" class="cc cc-by-sa">
+<p><span>Obra publicada con</span> <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Licencia Creative Commons Reconocimiento Compartir igual 4.0</a></p>
+</div>
+</section>
+</div>
+<div id='bottomPagination'>
+<nav class="pagination noprt">
+<a href="index.html" class="prev"><span><span>&laquo; </span>Anterior</span></a> <span class="sep">| </span><a href="2_url_en_formularios.html" class="next"><span>Siguiente<span> &raquo;</span></span></a>
+</nav>
+</div>
+</div>
+<script type="text/javascript" src="_style_js.js"></script></body></html>

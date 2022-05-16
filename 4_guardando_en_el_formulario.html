@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+<head>
+<link rel="stylesheet" type="text/css" href="base.css" />
+<link rel="stylesheet" type="text/css" href="exe_highlighter.css" />
+<link rel="stylesheet" type="text/css" href="content.css" />
+<link rel="stylesheet" type="text/css" href="nav.css" />
+<meta http-equiv="content-type" content="text/html;  charset=utf-8" />
+<title>4. Guardando en el Formulario | Formularios, URL y Deploy en Django </title>
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<meta name="author" content="Eduvirtual UNAB" />
+<link rel="license" type="text/html" href="http://creativecommons.org/licenses/by-sa/4.0/" />
+<meta name="generator" content="eXeLearning 2.6 - exelearning.net" />
+<!--[if lt IE 9]><script type="text/javascript" src="exe_html5.js"></script><![endif]-->
+<script type="text/javascript" src="exe_jquery.js"></script>
+<script type="text/javascript" src="exe_highlighter.js"></script>
+<script type="text/javascript" src="common_i18n.js"></script>
+<script type="text/javascript" src="common.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body class="exe-web-site" id="exe-node-5"><script type="text/javascript">document.body.className+=" js"</script>
+<div id="content">
+<p id="skipNav"><a href="#main" class="sr-av">Saltar la navegación</a></p>
+<header id="header" ><div id="headerContent">Formularios, URL y Deploy en Django</div></header>
+<nav id="siteNav">
+<ul>
+   <li><a href="index.html" class="daddy main-node">Inicio</a></li>
+   <li><a href="1_formularios_en_djgango.html" class="no-ch">1. Formularios en Djgango</a></li>
+   <li><a href="2_url_en_formularios.html" class="no-ch">2. URL en Formularios</a></li>
+   <li><a href="3_manejo_de_plantillas.html" class="no-ch">3. Manejo de Plantillas</a></li>
+   <li id="active"><a href="4_guardando_en_el_formulario.html" class="active no-ch">4. Guardando en el Formulario</a></li>
+   <li><a href="5_validacin_de_datos.html" class="no-ch">5. Validación de Datos</a></li>
+   <li><a href="6_seguridad.html" class="no-ch">6. Seguridad</a></li>
+</ul>
+</nav>
+<div id='topPagination'>
+<nav class="pagination noprt">
+<a href="3_manejo_de_plantillas.html" class="prev"><span><span>&laquo; </span>Anterior</span></a> <span class="sep">| </span><a href="5_validacin_de_datos.html" class="next"><span>Siguiente<span> &raquo;</span></span></a>
+</nav>
+</div>
+<div id="main-wrapper">
+<section id="main">
+<header id="nodeDecoration"><h1 id="nodeTitle">4. Guardando en el Formulario</h1></header>
+<article class="iDevice_wrapper FreeTextIdevice" id="id10">
+<div class="iDevice emphasis0">
+<div id="ta10_86" class="block iDevice_content">
+<p><img src="Subtema4.png" alt="" width="4044" height="1024" /></p>
+</div>
+</div>
+</article>
+<article class="iDevice_wrapper textIdevice em_iDevice" id="id3">
+<div class="iDevice emphasis1" >
+<header class="iDevice_header iDevice_header_noIcon"><h1 class="iDeviceTitle">Contenido</h1></header>
+<div class="iDevice_inner">
+<div class="iDevice_content_wrapper">
+<div id="ta3_116_2" class="block iDevice_content">
+<div class="exe-text"><p><span style="font-family: arial, helvetica, sans-serif;">Procedemos a abrir blog/views.py de nuevo en el editor. De momento todo lo que tenemos en la vista post_new es lo siguiente:</span></p>
+<div class="highlighted-code code-style-2 language-python line-numbers">
+<div style="text-align: justify;">
+<pre><code>def post_new(request):
+    form = PostForm()
+    return render(request, 'blog/post_edit.html', {'form': form})</code></pre>
+</div>
+</div>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Cuando enviamos el formulario somos redirigidos a la misma vista, pero esta vez tenemos algunos datos adicionales en request, más específicamente en request.POST (el nombre no tiene nada que ver con un post del blog, se refiere a que estamos "publicando" -en inglés, posting- datos). ¿Recuerdas que en el archivo HTML la definición de &lt;form&gt; tenía la variable method="POST"?. Todos los campos del formulario estan ahora en request.POST. No deberías renombrar la variable POST (el único nombre que también es válido para la variable method es GET, pero no tenemos tiempo para explicar cuál es la diferencia).</span></p>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">En nuestra vista tenemos dos situaciones distintas que manejar: primero, cuando accedemos a la página por primera vez y queremos un formulario vacío, y segundo, cuando regresamos a la vista con los datos del formulario que acabamos de ingresar. Así que tenemos que añadir una condición (utilizaremos if para eso):</span></p>
+<div class="highlighted-code code-style-2 language-python line-numbers">
+<div>
+<pre><code>if request.method == "POST":
+    [...]
+else:
+    form = PostForm()</code></pre>
+</div>
+</div>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Es hora de rellenar los puntos [...]. Si el método es POST entonces querremos construir el PostForm con datos del formulario, cierto? Lo haremos de la siguiente manera:</span></p>
+<div class="highlighted-code code-style-2 language-python line-numbers">
+<div>
+<pre><code>form = PostForm(request.POST)</code></pre>
+</div>
+</div>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Lo siguiente es verificar si el formulario está correcto (si todos los campos necesarios están definidos y no hay valores incorrectos). Lo hacemos con form.is_valid(). Comprobamos que el formulario es válido y, si es así, lo podemos salvar.</span></p>
+<div class="highlighted-code code-style-2 language-python line-numbers">
+<div>
+<pre><code>#blog/views.py
+
+if form.is_valid():
+    post = form.save(commit=False)
+    post.author = request.user
+    post.published_date = timezone.now()
+    post.save()</code></pre>
+</div>
+</div>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Básicamente, tenemos que hacer dos cosas: guardamos el formulario con form.save y añadimos una autora (ya que no había ningún campo de author en el PostForm y este campo es obligatorio). commit=False significa que no queremos guardar el modelo Post aún - queremos añadir la autora primero. La mayoría de las veces utilizarás form.save(), sin commit=False, pero en este caso, tenemos que hacerlo. post.save() conservará los cambios (añadiendo a autor) y se creará una nuevo post en el blog.</span></p>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Por último, sería genial si podemos inmediatamente ir a la página post_detail del nuevo post. Para hacerlo necesitamos importar algo más:</span></p>
+<div class="highlighted-code code-style-2 language-python line-numbers">
+<div>
+<pre><code>#blog/views.py
+
+from django.shortcuts import redirect</code></pre>
+</div>
+</div>
+<p style="text-align: justify;"><span style="font-family: arial, helvetica, sans-serif;">Agrégalo al principio del archivo. Y ahora podemos decir: "ve a la página post_detail del post recién creado":</span></p>
+<div class="highlighted-code code-style-2 language-python line-numbers">
+<div>
+<pre><code>#blog/views.py
+
+return redirect('post_detail', pk=post.pk)</code></pre>
+</div>
+</div>
+<p><span style="font-family: arial, helvetica, sans-serif;">post_detail es el nombre de la vista a la que queremos ir. ¿Recuerdas que esta view requiere una variable pk? Para pasarlo a las vistas utilizamos pk=post.pk, donde post es el post recién creado.</span></p>
+<div class="highlighted-code code-style-2 language-python line-numbers">
+<div>
+<pre><code>def post_new(request):
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.published_date = timezone.now()
+            post.save()
+            return redirect('post_detail', pk=post.pk)
+    else:
+        form = PostForm()
+    return render(request, 'blog/post_edit.html', {'form': form})</code></pre>
+</div>
+</div>
+<p></p></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<div id="packageLicense" class="cc cc-by-sa">
+<p><span>Obra publicada con</span> <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Licencia Creative Commons Reconocimiento Compartir igual 4.0</a></p>
+</div>
+</section>
+</div>
+<div id='bottomPagination'>
+<nav class="pagination noprt">
+<a href="3_manejo_de_plantillas.html" class="prev"><span><span>&laquo; </span>Anterior</span></a> <span class="sep">| </span><a href="5_validacin_de_datos.html" class="next"><span>Siguiente<span> &raquo;</span></span></a>
+</nav>
+</div>
+</div>
+<script type="text/javascript" src="_style_js.js"></script></body></html>
